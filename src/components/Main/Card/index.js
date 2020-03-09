@@ -1,12 +1,12 @@
 import React from "react";
-import { Container, Name, PlayerImg, Team } from "./styles";
+import "./styles.css";
 
 const Card = () => (
-	<Container>
-		<Name>Gordon "Snake" Hayward</Name>
-		<PlayerImg src="http://localhost:3008/gordon_hayward.png" alt="player_image" />
-		<Team>Boston Celtics</Team>
-	</Container>
+	<div className="container">
+		<p className='name'>Gordon "Snake" Hayward</p>
+		<img className='playerImg' src="http://localhost:3008/gordon_hayward.png" alt="player_image" />
+		<p className='team'>Boston Celtics</p>
+	</div>
 );
 
 export default Card;

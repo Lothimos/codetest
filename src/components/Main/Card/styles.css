@@ -1,0 +1,18 @@
+
+.container{
+	background-color: #f2f2f2;
+	border: 1px solid #EEE;
+	border-radius: 4px;
+	padding: 16px;
+	width: 280px;
+	text-align: center;
+}
+
+.name{
+	padding-bottom: 16px;
+}
+
+.playerImg {
+	padding-bottom: 16px;
+}
+
