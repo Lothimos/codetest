@@ -21,13 +21,17 @@ class CardViewer extends Component{
     }
 
     render (){
+        const bunchOfCards = this.state.playerData.map((dataItem, index)=>{
+            return <Card key={index} playerName={dataItem.name} playerImageUrl={'http://localhost:3008/' + dataItem.image} playerTeamName='Boston Celtics' />
+        });
+
         return <div className='container'>
             <p className='title'>NBA Interview</p>
             {this.state.showError && <span> There was an error. Normally this would be in red or something. </span>}
             {this.state.isLoading && <span> Loading...</span>}
             {!this.state.isLoading && <>
                 <Search />
-                <Card playerName='Gordon "Snake" Hayward' playerImageUrl='http://localhost:3008/gordon_hayward.png' playerTeamName='Boston Celtics' />
+                {bunchOfCards}
             </>}
         </div>
     }
