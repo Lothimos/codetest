@@ -1,15 +1,15 @@
 import React from "react";
-import Search from "./Search";
-import Card from "./Card";
-import { Container, Title } from "./styles";
+import CardViewer from '../../viewModels/CardViewer';
+import { Container } from "./styles";
 
-const Main = () => (
+const App = () => (
   <Container>
-    <Title>NBA Interview</Title>
+    <CardViewer />
+    {/* <Title>NBA Interview</Title>
     <Search />
-    <Card playerName='Gordon "Snake" Hayward' playerImageUrl='http://localhost:3008/gordon_hayward.png' playerTeamName='Boston Celtics' />
+    <Card playerName='Gordon "Snake" Hayward' playerImageUrl='http://localhost:3008/gordon_hayward.png' playerTeamName='Boston Celtics' /> */}
   </Container>
 )
 
-export default Main;
+export default App;
 
