@@ -7,7 +7,7 @@ const Main = () => (
   <Container>
     <Title>NBA Interview</Title>
     <Search />
-    <Card />
+    <Card playerName='Gordon "Snake" Hayward' playerImageUrl='http://localhost:3008/gordon_hayward.png' playerTeamName='Boston Celtics' />
   </Container>
 )
 
