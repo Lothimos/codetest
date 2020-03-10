@@ -8,6 +8,8 @@ import "./styles.css";
 //It would have been cool if I could have had storybook working, but that wis for another time. 
 
 class CardViewer extends Component{
+    _teamList = []; 
+    _unmounted = false;
 
     constructor(props){
         super(props);
@@ -15,14 +17,18 @@ class CardViewer extends Component{
     }
 
     componentDidMount(){
-        axios.get('http://localhost:3008/players')
-        .then(this.assignPlayerData)
-        .catch(this.processPlayerDataError);        
+        axios.get('http://localhost:3008/teams')
+        .then(this.getTheTeamList)
+        .catch(this.processPlayerDataError);     
+    }
+
+    componentWillUnmount(){
+        this._unmounted = true;
     }
 
     render (){
         const bunchOfCards = this.state.playerData.map((dataItem, index)=>{
-            return <Card key={index} playerName={dataItem.name} playerImageUrl={'http://localhost:3008/' + dataItem.image} playerTeamName='Boston Celtics' />
+            return <Card key={index} playerName={dataItem.name} playerImageUrl={'http://localhost:3008/' + dataItem.image} playerTeamName={this.getTeamNameById(dataItem.team)} />
         });
 
         return <div className='container'>
@@ -37,7 +43,23 @@ class CardViewer extends Component{
     }
 
     //Because anonymous functions consume more memory every time the component mounts or renders. This will do it once per class
-    assignPlayerData= (result) => {        
+    getTheTeamList = (result) => {
+        if(this._unmounted)
+            return;
+        this._teamList = result.data.map((team)=>{ return {id: team.id, name: team.name}});
+
+        axios.get('http://localhost:3008/players')
+        .then(this.assignPlayerData)
+        .catch(this.processPlayerDataError);   
+    }
+
+    getTeamNameById(id){
+        let team = this._teamList.find((team) =>{return team.id === id});
+        if(team)
+            return team.name;
+    }
+
+    assignPlayerData = (result) => {        
         console.log(result);          
         this.setState({isLoading:false, playerData: result.data});
     }
