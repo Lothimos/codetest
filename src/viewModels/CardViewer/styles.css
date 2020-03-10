@@ -9,3 +9,8 @@
 	padding-bottom: 32px;
  	text-align: center;
 }
+
+.flexContainer{
+	display: flex;
+  	flex-wrap: wrap;
+}
