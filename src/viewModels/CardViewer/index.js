@@ -35,22 +35,24 @@ class CardViewer extends Component{
         this._unmounted = true;
     }
 
-    //TODO: Flexbox still needs work. I hoping that I could get the wrap working. 
+
     render (){
         const bunchOfCards = this.state.playerData.map((dataItem, index)=>{
             return <Card key={index} playerName={dataItem.name} playerImageUrl={'http://localhost:3008/' + dataItem.image} playerTeamName={this.getTeamNameById(dataItem.team)} />
         });
 
-        return <div className='container'>
+        return <div className='cardViewerContainer'>
             <p className='title'>NBA Interview</p>
             {this.state.showError && <span> There was an error. Normally this would be in red or something. </span>}
-            {this.state.isLoading && <span> Loading...</span>}
-            {!this.state.isLoading && <>
-                <Search />
-                <div className='flexContainer'>
-                    {bunchOfCards}
-                </div>
-                <NextPrevNavigator />
+            {!this.state.showError && <>
+                {this.state.isLoading && <span> Loading...</span>}
+                {!this.state.isLoading && <>
+                    <Search />
+                    <div className='flexContainer'>
+                        {bunchOfCards}
+                    </div>
+                    <NextPrevNavigator />
+                </>}
             </>}
         </div>
     }

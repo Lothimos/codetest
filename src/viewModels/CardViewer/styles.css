@@ -1,5 +1,5 @@
 
-.container{
+.cardViewerContainer{
 	height: 100%;
 	width: 100%;
 }
@@ -12,5 +12,6 @@
 
 .flexContainer{
 	display: flex;
-  	flex-wrap: wrap;
+	flex-wrap: wrap;
+	justify-content: center;
 }
