@@ -18,7 +18,7 @@ class CardViewer extends Component{
 
     constructor(props){
         super(props);
-        this.state = {isLoading: true, playerData: [], showError: false, nextUrl: "", prevUrl: ""};
+        this.state = {isLoading: true, playerData: [], showError: false, canMoveNext: false, canMovePrev: false};
     }
 
     componentDidMount(){
@@ -52,7 +52,7 @@ class CardViewer extends Component{
                     <div className='flexContainer'>
                         {bunchOfCards}
                     </div>
-                    <NextPrevNavigator nextUrl={this.state.nextUrl} prevUrl={this.state.prevUrl} />
+                    <NextPrevNavigator nextUrl={this.state.canMoveNext ? '?page=' + (+this._page + 1) : ''} prevUrl={this.state.canMovePrev ? '?page=' + (+this._page - 1) : ''} />
                 </>}
             </>}
         </div>
@@ -77,15 +77,20 @@ class CardViewer extends Component{
 
     assignPlayerData = (result) => {               
         //some variables to store things rather than set state over and over: 
-        let nextPage;
-        let prevPage;
+        let canMoveNext;
+        let canMovePrev;
         if(result.headers && result.headers["link"]){
-            nextPage = headerHelper.getNextLink(result.headers["link"]);
-            prevPage = headerHelper.getPrevLink(result.headers["link"]);
+            canMoveNext = headerHelper.getNextLink(result.headers["link"]) != null;
+            canMovePrev = headerHelper.getPrevLink(result.headers["link"]) != null;
         }
 
+        
+        
+
+        //I see now that you probably expected a single page app, in which the get changes. I made it just shift the page so its navigable in the browser. 
+
             
-        this.setState({isLoading:false, playerData: result.data, nextUrl: nextPage, prevUrl: prevPage});
+        this.setState({isLoading:false, playerData: result.data, canMoveNext: canMoveNext, canMovePrev: canMovePrev});
     }
 
     processPlayerDataError = (error) => {
