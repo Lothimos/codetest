@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import axios from 'axios';
 import queryHelper from '../../helpers/queryHelper'
+import headerHelper from '../../helpers/headerHelper'
 import Search from '../../components/Main/Search'
 import Card from '../../components/Main/Card'
 import "./styles.css";
@@ -14,16 +15,14 @@ class CardViewer extends Component{
     _unmounted = false;
     //I don't need state for these as they are not used to refresh the page. Rather to navigate to another page.
     _page; //I declared these here so you would know he was used later. 
-    _prevUrl;
-    _nextUrl;
 
     constructor(props){
         super(props);
-        this.state = {isLoading: true, playerData: [], showError: false};
+        this.state = {isLoading: true, playerData: [], showError: false, nextUrl: "", prevUrl: ""};
     }
 
     componentDidMount(){
-        this._page = queryHelper.getParameterByName('page') ?? "0";
+        this._page = queryHelper.getParameterByName('page') ?? "1";
 
         //TODO: Store this in session, then test if it is there. We only need it once. 
         axios.get('http://localhost:3008/teams')
@@ -41,6 +40,8 @@ class CardViewer extends Component{
             return <Card key={index} playerName={dataItem.name} playerImageUrl={'http://localhost:3008/' + dataItem.image} playerTeamName={this.getTeamNameById(dataItem.team)} />
         });
 
+    
+
         return <div className='cardViewerContainer'>
             <p className='title'>NBA Interview</p>
             {this.state.showError && <span> There was an error. Normally this would be in red or something. </span>}
@@ -51,7 +52,7 @@ class CardViewer extends Component{
                     <div className='flexContainer'>
                         {bunchOfCards}
                     </div>
-                    <NextPrevNavigator />
+                    <NextPrevNavigator nextUrl={this.state.nextUrl} prevUrl={this.state.prevUrl} />
                 </>}
             </>}
         </div>
@@ -74,9 +75,17 @@ class CardViewer extends Component{
         .catch(this.processPlayerDataError);   
     }
 
-    assignPlayerData = (result) => {        
-        console.log(result);          
-        this.setState({isLoading:false, playerData: result.data});
+    assignPlayerData = (result) => {               
+        //some variables to store things rather than set state over and over: 
+        let nextPage;
+        let prevPage;
+        if(result.headers && result.headers["link"]){
+            nextPage = headerHelper.getNextLink(result.headers["link"]);
+            prevPage = headerHelper.getPrevLink(result.headers["link"]);
+        }
+
+            
+        this.setState({isLoading:false, playerData: result.data, nextUrl: nextPage, prevUrl: prevPage});
     }
 
     processPlayerDataError = (error) => {
