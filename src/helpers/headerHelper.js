@@ -13,14 +13,11 @@ class headerHelper{
         
         try{
             let parts = linkHeader.split(",")
-            console.log(parts);
             let correctPart;
             parts.forEach((part)=>{
                 if(part.indexOf(linkName) > 0)
                     correctPart = part;
             })
-
-            console.log(correctPart)
 
             if(correctPart)
                 return correctPart.substring(2, correctPart.indexOf(">"));

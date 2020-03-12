@@ -7,6 +7,7 @@ import Card from '../../components/Main/Card'
 import "./styles.css";
 import NextPrevNavigator from "../../components/Main/NextPrevNavigator";
 
+
 //This is a View Model. It does not render anything itself, instead it pulls in other controls to render, and controls logic.
 //It would have been cool if I could have had storybook working, but that wis for another time. 
 
@@ -18,7 +19,7 @@ class CardViewer extends Component{
 
     constructor(props){
         super(props);
-        this.state = {isLoading: true, playerData: [], showError: false, canMoveNext: false, canMovePrev: false, filterText: ''};
+        this.state = {isLoading: true, playerData: [], showError: false, canMoveNext: false, canMovePrev: false, filterText: '', cardPlayerIdsInEditMode: []};
     }
 
     componentDidMount(){
@@ -34,13 +35,20 @@ class CardViewer extends Component{
         this._unmounted = true;
     }
 
-
     render (){
         const bunchOfCards = this.state.playerData.map((dataItem, index)=>{
-            return <Card key={index} playerName={dataItem.name} playerImageUrl={'http://localhost:3008/' + dataItem.image} playerTeamName={this.getTeamNameById(dataItem.team)} />
-        });
-
-    
+            return <Card 
+                key={index} 
+                playerId={dataItem.id} 
+                playerName={dataItem.name} 
+                playerImageUrl={'http://localhost:3008/' + dataItem.image} 
+                playerTeamName={this.getTeamNameById(dataItem.team)} 
+                IsInEditMode={this.state.cardPlayerIdsInEditMode.indexOf(dataItem.id) >= 0 }
+                putCardInEditMode={this.putCardInEditMode}
+                saveCardInEditMode={this.saveCardInEditMode}
+                //store textbox edits would go here too.
+            />
+        });    
 
         return <div className='cardViewerContainer'>
             <p className='title'>NBA Interview</p>
@@ -91,13 +99,7 @@ class CardViewer extends Component{
             canMoveNext = headerHelper.getNextLink(result.headers["link"]) != null;
             canMovePrev = headerHelper.getPrevLink(result.headers["link"]) != null;
         }
-
-        
-        
-
-        //I see now that you probably expected a single page app, in which the get changes. I made it just shift the page so its navigable in the browser. 
-
-            
+        //I see now that you probably expected a single page app, in which the get changes. I made it just shift the page so its navigable in the browser.    
         this.setState({isLoading:false, playerData: result.data, canMoveNext: canMoveNext, canMovePrev: canMovePrev});
     }
 
@@ -112,6 +114,20 @@ class CardViewer extends Component{
 
         //TODO: Put this on a delay to avoid hammering your server.... 
         this.getPayerData();
+    }
+
+    putCardInEditMode=(playerId) => {
+        let newCardPlayerIdsInEditMode = [...this.state.cardPlayerIdsInEditMode, playerId];
+        this.setState({cardPlayerIdsInEditMode: newCardPlayerIdsInEditMode})
+    }
+
+    saveCardInEditMode=(playerId)=> {
+        //TODO: Make call to server to patch data
+        let newCardPlayerIdsInEditMode = [...this.state.cardPlayerIdsInEditMode];
+        let index = newCardPlayerIdsInEditMode.indexOf(playerId);
+        if(index >= 0)
+        newCardPlayerIdsInEditMode.splice(index, 1)
+        this.setState({cardPlayerIdsInEditMode: newCardPlayerIdsInEditMode})
     }
 }
 
