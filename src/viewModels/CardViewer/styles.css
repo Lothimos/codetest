@@ -15,3 +15,7 @@
 	flex-wrap: wrap;
 	justify-content: center;
 }
+
+.centeredThing{
+	text-align: center;
+}

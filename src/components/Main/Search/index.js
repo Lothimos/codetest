@@ -1,9 +1,9 @@
 import React from "react";
 import  "./styles.css";
 
-const Search = () => (
+const Search = (props) => (
 	<div>
-		<input placeholder="Search..." />
+		<input placeholder="Search..." value={props.textValue} onChange={(event)=>{if(props.updateFilterText) props.updateFilterText(event.target.value)}} />
 	</div>
 );
 

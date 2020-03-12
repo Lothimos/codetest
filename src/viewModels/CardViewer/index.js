@@ -18,7 +18,7 @@ class CardViewer extends Component{
 
     constructor(props){
         super(props);
-        this.state = {isLoading: true, playerData: [], showError: false, canMoveNext: false, canMovePrev: false};
+        this.state = {isLoading: true, playerData: [], showError: false, canMoveNext: false, canMovePrev: false, filterText: ''};
     }
 
     componentDidMount(){
@@ -48,11 +48,15 @@ class CardViewer extends Component{
             {!this.state.showError && <>
                 {this.state.isLoading && <span> Loading...</span>}
                 {!this.state.isLoading && <>
-                    <Search />
+                    <div className="centeredThing">
+                        <Search textValue={this.state.filter} updateFilterText={this.updateFilterText} />
+                    </div>
                     <div className='flexContainer'>
                         {bunchOfCards}
                     </div>
-                    <NextPrevNavigator nextUrl={this.state.canMoveNext ? '?page=' + (+this._page + 1) : ''} prevUrl={this.state.canMovePrev ? '?page=' + (+this._page - 1) : ''} />
+                    <div className='centeredThing'>
+                        <NextPrevNavigator nextUrl={this.state.canMoveNext ? '?page=' + (+this._page + 1) : ''} prevUrl={this.state.canMovePrev ? '?page=' + (+this._page - 1) : ''} />
+                    </div>
                 </>}
             </>}
         </div>
@@ -64,15 +68,19 @@ class CardViewer extends Component{
             return team.name;
     }
 
+    getPayerData(){
+        axios.get(`http://localhost:3008/players?_limit=10${this._page ? ('&_page=' + this._page) : ''}&q=${this.state.filterText}`)
+        .then(this.assignPlayerData)
+        .catch(this.processPlayerDataError); 
+    }
+
     //Because anonymous functions consume more memory every time the component mounts or renders. This will do it once per class
     getTheTeamList = (result) => {
         if(this._unmounted)
             return;
         this._teamList = result.data.map((team)=>{ return {id: team.id, name: team.name}});
 
-        axios.get(`http://localhost:3008/players?_limit=10${this._page ? ('&_page=' + this._page) : ''}`)
-        .then(this.assignPlayerData)
-        .catch(this.processPlayerDataError);   
+        this.getPayerData();  
     }
 
     assignPlayerData = (result) => {               
@@ -98,12 +106,12 @@ class CardViewer extends Component{
         this.setState({showError: true});
     }
 
-    //Running out of time for tonight, but I wanted to show how I would handle the events in the card. We want to pass them back into the view model,
-    //and let this decide how to work. Then we can swap out UI components as needed and keep the same business logic tied into the view model. 
-    saveCardEdit(playerId, firstName, etc){
-        //axios.patch(`http://localhost:3008/players/${playerId}`, {
-        // object values would go here. 
-        //})
+    //view models always handle events. The UI should be dumb and pass back their information to the view model...
+    updateFilterText = (filterText) => {
+        this.setState({filterText: filterText});
+
+        //TODO: Put this on a delay to avoid hammering your server.... 
+        this.getPayerData();
     }
 }
 
